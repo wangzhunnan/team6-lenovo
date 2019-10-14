@@ -19,6 +19,7 @@ import stuManager from "@/components/Teachers/stuManager.vue"//
 import courseManager from "@/components/Teachers/courseManager.vue"//
 import myContributions from "@/components/Teachers/myContributions.vue"//
 import myAnswer from "@/components/Teachers/myAnswer.vue"//
+import MasterSetting from "@/components/Teachers/MasterSetting.vue"//内容维护详情页
 
 Vue.use(VueRouter) //在vue对象中使用vue-router
 
@@ -114,6 +115,11 @@ const routes = [
                 component: myAnswer,
                 name: 'myAnswer'
             },
+            {//内容维护详情页
+                path: 'MasterSetting',
+                component: MasterSetting,
+                name: 'MasterSetting'
+            }
             
         ]
     }

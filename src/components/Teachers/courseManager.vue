@@ -1,227 +1,213 @@
 <template>
-  <div id="thome">
-    <el-container>
-      <!-- 头部 -->
-      <el-header>
-        <nav-menus></nav-menus>
-      </el-header>
-
-      <!-- 主题 -->
-      <el-main>
-        <div>
-          <el-row>
-            <el-col :span="3">
-              <div class="grid-content bg-purple"></div>
-            </el-col>
-            <el-col :span="18">
-              <div class="grid-content bg-purple-light">
-                <el-tabs v-model="activeName" @tab-click="handleClick" style="height:500px">
-                  <el-tab-pane label="大前端" name="first">
-                    <div>
-                      <el-col :span="6" style="margin-left:6px;">
-                        <el-card :body-style="{ padding: '0px',margin:'0px' }">
-                          <img src="../../images/06denglu.jpg" alt style="width:100%;height:50%;" />
-                          <div style="padding: 14px;">
-                            <li style="list-style:none">NVB</li>
-                            <br />
-                            <li style="list-style:none">vcv</li>
-                            <br />
-                            <li style="list-style:none">13门课,57个小时,567所学校定制</li>
-                            <div class="bottom clearfix" style="text-align:center">
-                              <el-button size="small" @click="addTab(editableTabsValue)">课程定制</el-button>
-                              <el-button type="text" class="button">内容维护</el-button>
-                            </div>
-                          </div>
-                        </el-card>
-                      </el-col>
-
-                      <el-col span="12">
-                        <ul style="margin-left:50px;float:left">
-                          第一学期
-                          <li>前端001</li>
-                          <li>前端导论</li>
-                          <el-tabs
-                            v-model="editableTabsValue"
-                            type="card"
-                            closable
-                            @tab-remove="removeTab"
-                          >
-                            <el-tab-pane
-                              v-for="(item, index) in editableTabs"
-                              :key="item.name"
-                              :label="item.title"
-                              :name="item.name"
-                            ><li>{{item.content}}</li></el-tab-pane>
-                          </el-tabs>
-                        </ul>
-                        <ul style="margin-left:50px;float:left">
-                          第二学期
-                          <li>前端002</li>
-                        </ul>
-                        <ul style="margin-left:50px;float:left">
-                          第三学期
-                          <li>php基础</li>
-                        </ul>
-                        <ul style="margin-left:50px;float:left"></ul>
-                      </el-col>
+  <div>
+    <el-row>
+      <el-col :span="24" class="header">
+        <div class="h-text">
+          <p class="h-t-p1">课程管理</p>
+          <p class="h-t-p2">贴合知识点 课程执行力 课程核心和主要内容</p>
+        </div>
+        <div class="h-img">
+          <img src="../../images/back03.png" alt />
+        </div>
+      </el-col>
+    </el-row>
+    <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
+      <el-tab-pane :label="item.name" v-for="(item,index) in arr" :key="index">
+        <!-- 因为只有id为1的大前端课程下有学期及课程，所以在循环遍历时先判断一下 -->
+        <div v-if="item.id == '1'" style="overflow: hidden;">
+          <div v-for="(item,index) in item.majorCustomAdapterList" :key="index">
+            <div v-if="item.id == '3'">
+              <div v-for="(item,index) in item.majorCustomItemTreeAdapterList" :key="index">
+                <div
+                  style="width: 200px; text-align: center; height: 460px; line-height: 50px; float: left;"
+                >
+                  <!-- 学期 -->
+                  <el-tag closable @close="clickClose(item.id)">{{ item.name }}</el-tag>
+                  <!-- 课程 -->
+                  <div v-for="(item,index) in item.childList" :key="index">
+                    <el-tag closable @close="clickClose(item.id)">{{ item.name }}</el-tag>
+                  </div>
+                  <!-- 添加课程按钮框 -->
+                  <template>
+                    <div style="overflow: hidden; width: 160px; margin: 0 auto;" v-if="isShow">
+                      <el-input class="input-new-tag" v-model="name" style="float: left;"></el-input>
+                      <el-button
+                        style="float: left; margin-top: 5px;"
+                        type="primary"
+                        plain
+                        @click="clickAdd(item.customId,item.id)"
+                      >添加</el-button>
                     </div>
-                  </el-tab-pane>
-                  <el-tab-pane label="移动互联" name="second"></el-tab-pane>
-                  <el-tab-pane label="软件开发" name="third"></el-tab-pane>
-                  <el-tab-pane label="云计算" name="fourth"></el-tab-pane>
-                  <el-tab-pane label="大数据" name="fifth"></el-tab-pane>
-                  <el-tab-pane label="人工智能" name="sixth"></el-tab-pane>
-                </el-tabs>
+                  </template>
+                </div>
               </div>
-            </el-col>
-            <el-col :span="3">
-              <div class="grid-content bg-purple"></div>
-            </el-col>
-          </el-row>
+              <template>
+                <!-- 添加学期按钮框 -->
+                <div style="float: left;" v-if="isShow">
+                  <el-input class="input-new-tag" v-model="name"></el-input>
+                  <el-button type="primary" plain @click="clickAdd(item.id,0,name)">添加</el-button>
+                </div>
+              </template>
+            </div>
+          </div>
+          <div
+            style="background-color: #f0f; width: 300px; height: 400px; float: right; margin-right: 40px;"
+          >
+            <div
+              style="width: 300px; height: 150px; background: linear-gradient(60deg, #3a6bf1, #7ecff5);"
+            >
+              <i class="el-icon-edit" style="color: #fff; font-size: 25px; padding: 15px;"></i>
+              <i
+                class="el-icon-delete"
+                style="color: #fff; font-size: 25px; padding: 15px; margin-left: 185px;"
+              ></i>
+            </div>
+            <div style="width: 300px; height: 150px; background-color: #FFF68F;"></div>
+            <div style="width: 300px; height: 100px; text-align: center; line-height: 100px;">
+              <el-button type="primary" @click="hideOrShow" v-text="btnText"></el-button>
+              <el-button type="primary" @click="whbtn">内容维护</el-button>
+            </div>
+          </div>
         </div>
-
-        <div style="display:none">
-          <el-row>
-            <el-col :span="3">
-              <div class="grid-content bg-purple"></div>
-            </el-col>
-            <el-col :span="18">
-              <div class="grid-content bg-purple-light">
-                <el-tabs v-model="activeName" @tab-click="handleClick" style="height:500px">
-                  <el-col :span="5">
-                    <el-menu
-                      default-active="2"
-                      class="el-menu-vertical-demo"
-                      @open="handleOpen"
-                      @close="handleClose"
-                    >
-                      <el-submenu index="1">
-                        <template slot="title">
-                          <i class="el-icon-menu"></i>
-                          <span>第一学期</span>
-                        </template>
-                        <el-menu-item-group>
-                          <el-menu-item index="1-1">前端001</el-menu-item>
-                          <el-menu-item index="1-2">前端导论</el-menu-item>
-                        </el-menu-item-group>
-                      </el-submenu>
-
-                      <el-submenu index="2">
-                        <template slot="title">
-                          <i class="el-icon-menu"></i>
-                          <span>第二学期</span>
-                        </template>
-                        <el-menu-item-group></el-menu-item-group>
-                      </el-submenu>
-
-                      <el-submenu index="3">
-                        <template slot="title">
-                          <i class="el-icon-menu"></i>
-                          <span>第三学期</span>
-                        </template>
-                        <el-menu-item-group></el-menu-item-group>
-                      </el-submenu>
-                    </el-menu>
-                  </el-col>
-                </el-tabs>
-              </div>
-            </el-col>
-            <el-col :span="3">
-              <div class="grid-content bg-purple"></div>
-            </el-col>
-          </el-row>
-        </div>
-      </el-main>
-
-      <!-- 页脚 -->
-      <el-footer>
-        <copy-right></copy-right>
-      </el-footer>
-    </el-container>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
+
 <script>
-export default {
-  name: "courseManager",
-  data() {
-    return {
-      activeName: "first",
-      editableTabsValue: "2",
-      editableTabs: [
-        {
-          title: "Tab 1",
-          name: "1",
-          content: "Tab 1 content"
+    export default {
+        name: "CourseManagement",
+        data: function() {
+            return {
+                tableData: [],
+                activeName: 0,
+                dynamicTags: [],
+                name: "",
+                customId: "",
+                id: "",
+                arr: [],
+                isShow: false,
+                btnText: "课程定制",
+            };
         },
-        {
-          title: "Tab 2",
-          name: "2",
-          content: "Tab 2 content"
-        }
-      ],
-      tabIndex: 2
-    };
-  },
-  methods: {
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
-    addTab(targetName) {
-      let newTabName = ++this.tabIndex + "";
-      this.editableTabs.push({
-        title: "New Tab",
-        name: newTabName,
-        content: "New Tab content"
-      });
-      this.editableTabsValue = newTabName;
-    },
-    removeTab(targetName) {
-      let tabs = this.editableTabs;
-      let activeName = this.editableTabsValue;
-      if (activeName === targetName) {
-        tabs.forEach((tab, index) => {
-          if (tab.name === targetName) {
-            let nextTab = tabs[index + 1] || tabs[index - 1];
-            if (nextTab) {
-              activeName = nextTab.name;
+        methods: {
+            handleClick(tab) {
+                // console.log(tab);
+            },
+            hideOrShow() {
+                this.isShow = !this.isShow;
+                if (this.isShow) {
+                    this.btnText = "保存修改";
+                } else {
+                    this.btnText = "课程定制";
+                }
+            },
+            //点击内容维护跳转至页面
+            whbtn(){
+                var app = this;
+                app.$router.push(`/teacher/MasterSetting/${3}`);
+            },
+            // 添加课程
+            clickAdd(customId, parentId) {
+                this.$http
+                    .post("/product/majorCustomItem/insert", {
+                        customId: customId,
+                        parentId: parentId,
+                        name: this.name
+                    })
+                    .then(function(res) {
+                        console.log(res);
+                    });
+            },
+            // 删除课程
+            clickClose(id) {
+                console.log(id);
+                this.$http
+                    .get(`/product/majorCustomItem/delete/${id}`)
+                    .then(function(res) {
+                        console.log(res.data);
+                    });
             }
-          }
-        });
-      }
-      this.editableTabsValue = activeName;
-      this.editableTabs = tabs.filter(tab => tab.name !== targetName);
-    }
-  },
-  created() {
-    //页面一开始显示的数据
-  }
-};
+        },
+        created() {
+            // 组件加载完成之后的生命回调函数,如果页面一加载就需要显示数据,数据就在此获取
+            var app = this;
+            this.$http
+                .get("/product/majorType/listContainCustomList")
+                .then(function(res) {
+                    console.log(res.data);
+                    app.arr = res.data;
+                });
+        }
+    };
 </script>
-<style>
-.el-row {
-  margin-bottom: 20px;
-  /* height: 500px; */
-}
 
-.el-col {
-  border-radius: 4px;
-}
+<style scoped>
+  /* 标题部分 */
+  .header {
+    min-height: 144px;
+    background: linear-gradient(60deg, #f336aa, #f57ed7);
+  }
+  .h-text {
+    float: left;
+    margin-left: 180px;
+    color: #ffffff;
+  }
+  .h-t-p1 {
+    font-size: 26px;
+    font-weight: 400;
+  }
+  .h-t-p2 {
+    font-weight: 300;
+    font-size: 16px;
+  }
+  .h-img {
+    float: right;
+    margin-right: 77px;
+  }
 
-.bg-purple-dark {
-  background: #99a9bf;
-}
+  .text {
+    font-size: 14px;
+  }
 
-/* .bg-purple-light {
-  background: #e5e9f2;
-} */
+  .item {
+    margin-bottom: 18px;
+  }
 
-.grid-content {
-  border-radius: 4px;
-  min-height: 36px;
-}
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
+  .clearfix:after {
+    clear: both;
+  }
 
-.row-bg {
-  padding: 10px 0;
-  background-color: #f9fafc;
-}
+  .box-card {
+    width: 480px;
+    display: inline-block;
+  }
+
+  .el-tag + .el-tag {
+    margin-left: 10px;
+  }
+  .button-new-tag {
+    height: 32px;
+    line-height: 30px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .input-new-tag {
+    width: 80px;
+    margin-left: 10px;
+    vertical-align: bottom;
+  }
+
+  .el-input__inner {
+    height: 30px;
+  }
+
+  .el-button + .el-button {
+    margin-left: 40px;
+  }
 </style>

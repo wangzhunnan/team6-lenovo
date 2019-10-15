@@ -18,8 +18,7 @@
             <!-- <el-button @click="deleteCourse()">删除课程</el-button> -->
             <!-- <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button> -->
             <span v-for="(item,index) in multipleSelection" :key="index">
-              <!-- <el-button @click="deleteCourse(item.id)">删除课程</el-button> -->
-              <el-button size="mini" type="danger" @click="handleDelete(item.$index, item.row)">删除</el-button>
+              <el-button @click="deleteCourse(item.id)">删除课程</el-button>
             </span>
           </div>
           <el-table
@@ -91,7 +90,8 @@ export default {
       row: "",
       index: "",
       showBtn: [],
-      multipleSelection: []
+      multipleSelection: [],
+      delCurrent: []
     };
   },
   methods: {
@@ -108,11 +108,8 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
       console.log(val);
+
     },
-    // indexMethod(index) {
-    //   //序号列
-    //   return index + 1;
-    // },
     addCourse() {
       //添加课程
       var list = {
@@ -125,7 +122,7 @@ export default {
     },
     handleEdit(index, row) {
       //当为编辑框的时候
-      console.log(index); //当前行的下标
+      console.log(index); //当前行的下标 1
       console.log(row); //当前行的数据
       console.log(row.id); //当前行的数据 undefined
       this.row = row;
@@ -138,7 +135,7 @@ export default {
     handelCancel(index, row) {
       //当取消选框的时候,就是保存数据的时候
       // console.log(index);//5
-      // console.log(row);//
+      console.log(row);//
       console.log(row.id);
       this.showEdit[index] = false;
       this.showBtn[row.id] = false;
@@ -148,9 +145,9 @@ export default {
       //保存课程，就是当点击对号按钮符号时触发
       console.log(name);
       console.log(id);
-      console.log(this.$data.tableData);
-      var itemId = this.$data.tableData[0].itemId;
-      console.log(itemId);
+      console.log(this);
+      console.log(this.leftTerm[0].childList[0].id);
+      var itemId = this.leftTerm[0].childList[0].id;
       var app = this;
       this.$http
         .post("/product/majorCustomCourse/save", {
@@ -166,30 +163,26 @@ export default {
           }
         });
     },
-    // deleteCourse() {
-    //   //删除课程
-    //   console.log(this.multipleSelection);
-    //   var delCurrent = this.multipleSelection;
-    //   // console.log(id);
-    //   this.$http
-    //     .post("/product/majorCustomCourse/deletes", delCurrent)
-    //     .then(function(res) {
-    //       console.log(res);
-    //       if (res.data == true) {
-    //         console.log("课程删除成功!");
-    //       }
-    //     });
-    // }
-    handleDelete(index, row) {
-      console.log(index);
-      console.log(row);
-      
+    deleteCourse(id) {
+      //删除课程
+      console.log(id);
+      console.log(this.multipleSelection);
+      this.delCurrent.push(id);
+      console.log(this.delCurrent);
+      this.$http
+        .post("/product/majorCustomCourse/deletes", this.delCurrent)
+        .then(function(res) {
+          console.log(res);
+          if (res.data == true) {
+            console.log("课程删除成功!");
+          }
+        });
     }
   },
   created() {
-    // console.log(this);
+    console.log(this);
     var app = this;
-    // console.log(this.$route.query.customId);
+    // console.log(this.$route);
     var customId = this.$route.query.customId;
     this.$http
       .get(`/product/majorCustomItem/listByCustomIdForAble/${customId}`)

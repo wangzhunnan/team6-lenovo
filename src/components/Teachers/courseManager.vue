@@ -65,7 +65,7 @@
             <div style="width: 300px; height: 150px; background-color: #FFF68F;"></div>
             <div style="width: 300px; height: 100px; text-align: center; line-height: 100px;">
               <el-button type="primary" @click="hideOrShow" v-text="btnText"></el-button>
-              <el-button type="primary" @click="whbtn">内容维护</el-button>
+              <el-button type="primary" @click="masterSetting">内容维护</el-button>
             </div>
           </div>
         </div>
@@ -103,9 +103,13 @@ export default {
       }
     },
     //点击内容维护跳转至页面
-    whbtn() {
-      var app = this;
-      app.$router.push(`/teacher/MasterSetting/${3}`);
+    masterSetting() {
+      this.$router.push({
+        path: '/teacher/MasterSetting',
+        query:{
+          customId: 3
+        }
+      })
     },
     // 添加课程
     clickAdd(customId, parentId) {

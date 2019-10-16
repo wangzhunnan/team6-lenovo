@@ -1,25 +1,48 @@
 <template>
-  <div>
+  <div class style="background: #eee9e9">
     <h2>MasterSetting内容维护详情页</h2>
     <el-row>
-      <el-col :span="8">
-        <el-collapse v-for="(item,index) in leftTerm" :key="index" accordion>
+      <!-- 左侧 -->
+      <el-col :span="5" :offset="1">
+        <!-- <el-collapse v-for="(item,index) in leftTerm" :key="index" accordion style="text-align:center">
           <el-collapse-item :title="item.name" name="1">
             <div v-for="(item,index) in item.childList" :key="index">
               <div @click="CourseDetails(item.id)">{{item.name}}</div>
             </div>
           </el-collapse-item>
-        </el-collapse>
+        </el-collapse>-->
+        <el-menu
+          default-active="2"
+          class="el-menu-vertical-demo"
+          v-for="(item,index) in leftTerm"
+          :key="index"
+          :title="item.name"
+        >
+          <!-- 学期 -->
+          <el-submenu index="1">
+            <template slot="title">
+              <i class="el-icon-menu" style="color:#49c0e0"></i>
+              <span>{{item.name}}</span>
+            </template>
+            <!-- 课程 -->
+            <el-menu-item-group>
+              <el-menu-item
+                index="'1-'+index"
+                v-for="(item,index) in item.childList"
+                :key="index"
+                :title="item.name"
+                @click="CourseDetails(item.id)"
+              >{{item.name}}</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+        </el-menu>
       </el-col>
-      <el-col :span="16">
+      <!-- 右侧 -->
+      <el-col :span="16" :offset="1">
         <div>
           <div>
             <el-button @click="addCourse()">添加课程</el-button>
-            <!-- <el-button @click="deleteCourse()">删除课程</el-button> -->
-            <!-- <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button> -->
-            <span v-for="(item,index) in multipleSelection" :key="index">
-              <el-button @click="deleteCourse(item.id)">删除课程</el-button>
-            </span>
+            <el-button @click="deleteCourse()">删除课程</el-button>
           </div>
           <el-table
             ref="multipleTable"
@@ -62,7 +85,9 @@
             <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
             <el-table-column prop="updateTime" label="最后更新时间" show-overflow-tooltip></el-table-column>
             <el-table-column prop="sc" label show-overflow-tooltip>
-              <el-button size="small">上传资源</el-button>
+              <template slot-scope="scope">
+                <el-button size="small" @click="uploadResources(scope.row.id)">上传资源</el-button>
+              </template>
             </el-table-column>
           </el-table>
         </div>
@@ -86,29 +111,34 @@ export default {
         }
       ],
       //编辑框
-      showEdit: [],
+      showEdit: [], //展示显示name的
       row: "",
       index: "",
-      showBtn: [],
+      showBtn: [], //展示显示编辑或者对号符号的
       multipleSelection: [],
-      delCurrent: []
+      delCurrent: [], //存储删除课程资源的id
+      insertId: "" // 课程id
     };
   },
   methods: {
     CourseDetails(itemId) {
-      console.log(itemId);
+      this.insertId = itemId; //课程id
+      //获取左边栏的全部信息
+      // console.log(itemId);
       var app = this;
       this.$http
         .get(`/product/majorCustomCourse/getListByItemId/${itemId}`)
         .then(function(res) {
-          console.log(res.data);
+          // console.log(res.data);
           app.tableData = res.data;
         });
     },
     handleSelectionChange(val) {
-      this.multipleSelection = val;
-      console.log(val);
-
+      // console.log(val);
+      //map函数是进行筛选每一行的id,并将获取到的id放入delCurrent数组中
+      app.multipleSelection = val.map(item => {
+        this.delCurrent.push(item.id);
+      });
     },
     addCourse() {
       //添加课程
@@ -118,13 +148,12 @@ export default {
         updateTime: this.updateTime
       };
       this.tableData.push(list);
-      console.log(this.tableData);
+      // console.log(this.tableData);
     },
     handleEdit(index, row) {
       //当为编辑框的时候
-      console.log(index); //当前行的下标 1
-      console.log(row); //当前行的数据
-      console.log(row.id); //当前行的数据 undefined
+      // console.log(index); //当前行的下标
+      // console.log(row); //当前行的数据
       this.row = row;
       this.index = index;
       this.showEdit[index] = true; //修改数组
@@ -135,8 +164,7 @@ export default {
     handelCancel(index, row) {
       //当取消选框的时候,就是保存数据的时候
       // console.log(index);//5
-      console.log(row);//
-      console.log(row.id);
+      // console.log(row);
       this.showEdit[index] = false;
       this.showBtn[row.id] = false;
       this.saveCustomCourse(row.name, row.id);
@@ -146,8 +174,8 @@ export default {
       console.log(name);
       console.log(id);
       console.log(this);
-      console.log(this.leftTerm[0].childList[0].id);
-      var itemId = this.leftTerm[0].childList[0].id;
+      // console.log(this.insertId);//课程id
+      var itemId = this.insertId;
       var app = this;
       this.$http
         .post("/product/majorCustomCourse/save", {
@@ -156,26 +184,42 @@ export default {
           id
         })
         .then(function(res) {
-          // console.log(res.data);
-          if (res.data) {
+          console.log(res);
+          if (res.data == "") {
             console.log("保存课程资源成功!");
-            // alert("课程创建成功，请重新刷新页面！");
+            alert("课程创建成功，请重新刷新页面！");
+          } else {
+            console.log("失败的保存");
           }
         });
     },
-    deleteCourse(id) {
+    deleteCourse() {
       //删除课程
-      console.log(id);
       console.log(this.multipleSelection);
-      this.delCurrent.push(id);
+      // this.delCurrent.push(id);
       console.log(this.delCurrent);
+      var app = this;
+      if (confirm("确认要删除所选课程吗？")) {
+        this.$http
+          .post("/product/majorCustomCourse/deletes", this.delCurrent)
+          .then(function(res) {
+            console.log(res);
+            if (res.data == true) {
+              console.log("课程删除成功!");
+              alert("课程删除成功，请重新刷新页面！");
+            } else {
+              app.$message.error("删除失败");
+            }
+          });
+      }
+    },
+    uploadResources(customCourseId) {
+      //上传资源
+      console.log(customCourseId);
       this.$http
-        .post("/product/majorCustomCourse/deletes", this.delCurrent)
+        .get(`/product/customMaterial/getListByCourseId/${customCourseId}`)
         .then(function(res) {
-          console.log(res);
-          if (res.data == true) {
-            console.log("课程删除成功!");
-          }
+          console.log(res.data);
         });
     }
   },

@@ -2,9 +2,11 @@
   <div class style="background: #eee9e9">
     <el-row class="top">
       <el-col
+        :span="22"
         :offset="2"
         style="font-size:30px;color:#fff;margin-top:20px;"
       >welcome，MasterSetting内容维护界面</el-col>
+      <el-col></el-col>
     </el-row>
     <el-divider></el-divider>
     <!-- -------------------------------- -->
@@ -17,7 +19,7 @@
           v-for="(item,index) in leftTerm"
           :key="index"
         >
-          <el-submenu>
+          <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-menu"></i>
               <span slot="title">{{item.name}}</span>
@@ -27,6 +29,7 @@
             </el-menu-item>
             <el-menu-item-group>
               <el-menu-item
+                index="'1-'+index"
                 v-for="(item,index) in item.childList"
                 @click="CourseDetails(item.id)"
                 :key="index"
@@ -81,9 +84,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="140" :formatter="dateFormat"></el-table-column>
-            <!-- <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column> -->
             <el-table-column prop="updateTime" label="最后更新时间" width="140" :formatter="dateFormat"></el-table-column>
-            <!-- <el-table-column prop="updateTime" label="最后更新时间" show-overflow-tooltip></el-table-column> -->
             <el-table-column prop="sc" label show-overflow-tooltip>
               <template slot-scope="scope">
                 <el-button @click="dialogTableVisible = true">
@@ -260,9 +261,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="140" :formatter="dateFormat"></el-table-column>
-            <!-- <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column> -->
             <el-table-column prop="updateTime" label="最后更新时间" width="140" :formatter="dateFormat"></el-table-column>
-            <!-- <el-table-column prop="updateTime" label="最后更新时间" show-overflow-tooltip></el-table-column> -->
             <el-table-column prop="sc" label show-overflow-tooltip>
               <template slot-scope="scope">
                 <el-button @click="dialogTableVisible = true">
@@ -613,6 +612,9 @@ export default {
           // console.log(res.data);
           if (res.data == "") {
             app.$message.success("更新成功！");
+            app.fileAuthor = '';
+            app.shortDescVal = '';
+            app.content = '';
             //再次调用获取接口函数，重新刷新列表
             var customCourseId = app.customCourseId;
             app.resourceList(customCourseId);
@@ -672,6 +674,10 @@ export default {
 };
 </script>
 <style>
+*{
+  margin: 0;
+  padding: 0;
+}
 .top {
   height: 100px;
   background: #ff0;

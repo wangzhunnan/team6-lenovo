@@ -105,14 +105,15 @@ export default {
     //点击内容维护跳转至页面
     masterSetting() {
       this.$router.push({
-        path: '/teacher/MasterSetting',
-        query:{
+        path: "/teacher/MasterSetting",
+        query: {
           customId: 3
         }
-      })
+      });
     },
     // 添加课程
     clickAdd(customId, parentId) {
+      var app = this;
       this.$http
         .post("/product/majorCustomItem/insert", {
           customId: customId,
@@ -120,17 +121,35 @@ export default {
           name: this.name
         })
         .then(function(res) {
-          console.log(res);
+          // console.log(res);
+          app.$message.success("添加成功!");
+          app.$http
+            .get("/product/majorType/listContainCustomList")
+            .then(function(res) {
+              // console.log(res.data);
+              app.arr = res.data;
+            });
         });
     },
     // 删除课程
     clickClose(id) {
-      console.log(id);
-      this.$http
-        .get(`/product/majorCustomItem/delete/${id}`)
-        .then(function(res) {
-          console.log(res.data);
-        });
+      // console.log(id);
+      var app = this;
+      if (confirm("确认要删除所选课程吗？")) {
+        this.$http
+          .get(`/product/majorCustomItem/delete/${id}`)
+          .then(function(res) {
+            // console.log(res.data);
+            app.$message.success("删除成功!");
+
+            app.$http
+              .get("/product/majorType/listContainCustomList")
+              .then(function(res) {
+                // console.log(res.data);
+                app.arr = res.data;
+              });
+          });
+      }
     }
   },
   created() {

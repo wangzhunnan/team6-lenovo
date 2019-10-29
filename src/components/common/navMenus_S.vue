@@ -2,7 +2,7 @@
   <div id="navMenus">
     <el-row :gutter="20">
       <el-col :span="4">
-        <div class="grid-content bg-purple">
+        <!-- <div class="grid-content bg-purple">
           <div class="sidebar">
             <div class="lenovo_logo">
               <img src="../../images/lenovo-learning.png" alt />
@@ -25,6 +25,9 @@
               </el-dropdown>
             </div>
           </div>
+        </div> -->
+        <div class="lenovo.png">
+          <img src="../../images/lenovo.png" alt />
         </div>
       </el-col>
       <el-col :span="14">
@@ -170,14 +173,12 @@ a {
   font-size: 14px;
   margin-bottom: 20px;
 }
-.sidebar{
-    position: absolute;
-    height: 970px;
-    width: 100%;
-    background: #293039;
-    text-align: center;
-}
-.sidebar .lenovo_logo{
+.lenovo_logo{
     margin-left: 32px;
+    
+}
+.lenovo_logo img{
+  width: 50px;
+    height: 50px;
 }
 </style>

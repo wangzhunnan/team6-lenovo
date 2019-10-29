@@ -9,7 +9,6 @@
         <div class="h-img">
           <img src="../../images/back03.png" alt />
         </div>
-        <!-- 存在bug：1.课程管理的一开始就显示课程01内容，2.课程资源的下载，3.在线回复的回复后自动刷新 -->
       </el-col>
     </el-row>
     <el-row>
@@ -266,7 +265,8 @@ export default {
       opinionDetails: {}, //意见反馈处理详情
       dialogVisible02: false, //查看意见反馈处理dialog
       dialogVisible03: false, //处理意见处理dialog
-      textareaFeedback: "" //反馈意见内容
+      textareaFeedback: "", //反馈意见内容
+      tableDataNews:[]
     };
   },
   methods: {
@@ -280,6 +280,9 @@ export default {
     },
     //获取问题库消息列表
     getNewList() {
+      this.tableDataNews = [];
+      this.dataNewsY = [];
+      this.dataNewsN=[];
       var app = this;
       this.$http
         .post("/business/studentQuestion/page", {
@@ -288,15 +291,15 @@ export default {
         })
         .then(function(res) {
           // console.log(res.data);
-          var tableDataNews = res.data.data;
-          for (var i = 0; i < tableDataNews.length; i++) {
-            if (tableDataNews[i].explanation == null) {
+          app.tableDataNews = res.data.data;
+          for (var i = 0; i < app.tableDataNews.length; i++) {
+            if (app.tableDataNews[i].explanation == null) {
               //未回复
-              app.dataNewsN.push(tableDataNews[i]);
+              app.dataNewsN.push(app.tableDataNews[i]);
             } else {
               //已回复
-              tableDataNews[i].isSolution == "Y";
-              app.dataNewsY.push(tableDataNews[i]);
+              app.tableDataNews[i].isSolution == "Y";
+              app.dataNewsY.push(app.tableDataNews[i]);
             }
           }
           // console.log(app.dataNewsY); //已回复
@@ -354,29 +357,7 @@ export default {
             // console.log(app.dataNewsN[app.index]);
             // app.dataNewsN[app.index].isSolution = "Y"; //修改是否为回复的状态
             // app.$set(app.dataNewsN[app.index], "isSolution", "Y"); //修改vue中的回复的状态
-            // app.getNewList(); //重新调用获取消息列表函数
-            
-            // app.$http
-            //   .post("/business/studentQuestion/page", {
-            //     page: app.page,
-            //     pageSize: app.pageSize
-            //   })
-            //   .then(function(res) {
-            //     // console.log(res.data);
-            //     var tableDataNews = res.data.data;
-            //     for (var i = 0; i < tableDataNews.length; i++) {
-            //       if (tableDataNews[i].explanation == null) {
-            //         //未回复
-            //         app.dataNewsN.push(tableDataNews[i]);
-            //       } else {
-            //         //已回复
-            //         tableDataNews[i].isSolution == "Y";
-            //         app.dataNewsY.push(tableDataNews[i]);
-            //       }
-            //     }
-            //     // console.log(app.dataNewsY); //已回复
-            //     // console.log(app.dataNewsN); //未回复
-            //   });
+            app.getNewList(); //重新调用获取消息列表函数
 
           }
         });

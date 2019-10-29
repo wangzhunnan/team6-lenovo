@@ -1,17 +1,17 @@
 <template>
   <div>
-    <el-row>
-      <el-col :span="24" class="header">
-        <div class="h-text">
-          <p class="h-t-p1">课程管理</p>
-          <p class="h-t-p2">贴合知识点 课程执行力 课程核心和主要内容</p>
-        </div>
-        <div class="h-img">
-          <img src="../../images/back03.png" alt />
+    <el-row class="header">
+      <el-col :span="5" :offset="3">
+        <div style="margin-top:40px">
+          <div style="font-size:25px;color:#fff">课程管理</div>
+          <div style="font-size:14px;color:#fff;padding-top:15px">贴合知识点 课程执行力 课程核心和主要内容</div>
         </div>
       </el-col>
+      <el-col :span="4" :offset="9">
+        <img src="../../images/back03.png" alt />
+      </el-col>
     </el-row>
-    <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
+    <el-tabs v-model="activeName" type="border-card">
       <el-tab-pane :label="item.name" v-for="(item,index) in arr" :key="index">
         <!-- 因为只有id为1的大前端课程下有学期及课程，所以在循环遍历时先判断一下 -->
         <div v-if="item.id == '1'" style="overflow: hidden;">
@@ -51,10 +51,10 @@
             </div>
           </div>
           <div
-            style="background-color: #f0f; width: 300px; height: 400px; float: right; margin-right: 40px;"
+            style="background-color: #3ff; width: 300px; height: 400px; float: right; margin-right: 40px;"
           >
             <div
-              style="width: 300px; height: 150px; background: linear-gradient(60deg, #3a6bf1, #7ecff5);"
+              style="width: 300px; height: 150px; background: linear-gradient(60deg, #36f3a4, #066b24);"
             >
               <i class="el-icon-edit" style="color: #fff; font-size: 25px; padding: 15px;"></i>
               <i
@@ -62,7 +62,7 @@
                 style="color: #fff; font-size: 25px; padding: 15px; margin-left: 185px;"
               ></i>
             </div>
-            <div style="width: 300px; height: 150px; background-color: #FFF68F;"></div>
+            <div style="width: 300px; height: 150px; background: #9ff;"></div>
             <div style="width: 300px; height: 100px; text-align: center; line-height: 100px;">
               <el-button type="primary" @click="hideOrShow" v-text="btnText"></el-button>
               <el-button type="primary" @click="masterSetting">内容维护</el-button>
@@ -91,8 +91,15 @@ export default {
     };
   },
   methods: {
-    handleClick(tab) {
-      // console.log(tab);
+    //获取全部数据
+    getAllList() {
+      var app = this;
+      this.$http
+        .get("/product/majorType/listContainCustomList")
+        .then(function(res) {
+          // console.log(res.data);
+          app.arr = res.data;
+        });
     },
     hideOrShow() {
       this.isShow = !this.isShow;
@@ -123,12 +130,8 @@ export default {
         .then(function(res) {
           // console.log(res);
           app.$message.success("添加成功!");
-          app.$http
-            .get("/product/majorType/listContainCustomList")
-            .then(function(res) {
-              // console.log(res.data);
-              app.arr = res.data;
-            });
+          app.name = ""; //清空输入框
+          app.getAllList(); //重新调用获取全部数据函数
         });
     },
     // 删除课程
@@ -141,26 +144,14 @@ export default {
           .then(function(res) {
             // console.log(res.data);
             app.$message.success("删除成功!");
-
-            app.$http
-              .get("/product/majorType/listContainCustomList")
-              .then(function(res) {
-                // console.log(res.data);
-                app.arr = res.data;
-              });
+            app.getAllList(); //重新调用获取全部数据函数
           });
       }
     }
   },
   created() {
     // 组件加载完成之后的生命回调函数,如果页面一加载就需要显示数据,数据就在此获取
-    var app = this;
-    this.$http
-      .get("/product/majorType/listContainCustomList")
-      .then(function(res) {
-        console.log(res.data);
-        app.arr = res.data;
-      });
+    this.getAllList();
   }
 };
 </script>
@@ -168,35 +159,8 @@ export default {
 <style scoped>
 /* 标题部分 */
 .header {
-  min-height: 144px;
-  background: linear-gradient(60deg, #f336aa, #f57ed7);
+  background: linear-gradient(60deg, #36f3a4, #066b24);
 }
-.h-text {
-  float: left;
-  margin-left: 180px;
-  color: #ffffff;
-}
-.h-t-p1 {
-  font-size: 26px;
-  font-weight: 400;
-}
-.h-t-p2 {
-  font-weight: 300;
-  font-size: 16px;
-}
-.h-img {
-  float: right;
-  margin-right: 77px;
-}
-
-.text {
-  font-size: 14px;
-}
-
-.item {
-  margin-bottom: 18px;
-}
-
 .clearfix:before,
 .clearfix:after {
   display: table;

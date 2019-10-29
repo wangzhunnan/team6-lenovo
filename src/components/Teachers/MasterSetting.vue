@@ -1,189 +1,18 @@
 <template>
   <div class style="background: #eee9e9">
     <el-row class="top">
-      <el-col
-        :span="22"
-        :offset="2"
-        style="font-size:30px;color:#fff;margin-top:20px;"
-      >welcome，MasterSetting内容维护界面</el-col>
-      <el-col></el-col>
-    </el-row>
-    <el-divider></el-divider>
-    <!-- -------------------------------- -->
-    <el-row>
-      <!-- 左侧 -->
-      <el-col :offset="1" :span="5">
-        <el-menu
-          class="el-menu-vertical-demo"
-          :collapse="isCollapse"
-          v-for="(item,index) in leftTerm"
-          :key="index"
-        >
-          <el-submenu index="1">
-            <template slot="title">
-              <i class="el-icon-menu"></i>
-              <span slot="title">{{item.name}}</span>
-            </template>
-            <el-menu-item>
-              <span slot="title">{{item.name}}</span>
-            </el-menu-item>
-            <el-menu-item-group>
-              <el-menu-item
-                index="'1-'+index"
-                v-for="(item,index) in item.childList"
-                @click="CourseDetails(item.id)"
-                :key="index"
-              >{{item.name}}</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-        </el-menu>
-      </el-col>
-      <!-- 右侧 -->
-      <el-col :span="16" :offset="1">
-        <div>
-          <div>
-            <el-button @click="addCourse()">添加课程</el-button>
-            <el-button @click="deleteCourse()">删除课程</el-button>
-          </div>
-          <el-table
-            ref="multipleTable"
-            :data="tableData"
-            tooltip-effect="dark"
-            style="width: 100%"
-            @selection-change="handleSelectionChange"
-          >
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="序号" width="120" type="index"></el-table-column>
-            <el-table-column prop="name" label="课程名称" width="200">
-              <template slot-scope="{$index,row}">
-                <div style="display:inline-block;width:90%">
-                  <span v-if="showEdit[$index]">
-                    <el-input
-                      required
-                      v-model="row.name"
-                      placeholder="输入课程名称"
-                      @keyup.enter.native="saveCustomCourse(row.name,row.id)"
-                    ></el-input>
-                  </span>
-                  <span v-if="!showEdit[$index]">{{row.name}}</span>
-                </div>
-                <div style="display:inline-block">
-                  <i
-                    id="edit"
-                    class="el-icon-edit"
-                    @click="handleEdit($index,row)"
-                    v-if="!showBtn[row.id]"
-                  ></i>
-                  <i
-                    id="check"
-                    class="el-icon-check"
-                    @click="handelCancel($index,row)"
-                    v-if="showBtn[row.id]"
-                  ></i>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="140" :formatter="dateFormat"></el-table-column>
-            <el-table-column prop="updateTime" label="最后更新时间" width="140" :formatter="dateFormat"></el-table-column>
-            <el-table-column prop="sc" label show-overflow-tooltip>
-              <template slot-scope="scope">
-                <el-button @click="dialogTableVisible = true">
-                  <span @click="uploadResources(scope.row.id)">上传资源</span>
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-          <!-- 上传资源dialog -->
-          <el-dialog title="新增课程资源" :visible.sync="dialogTableVisible" width="70%">
-            <el-table :data="gridData">
-              <el-table-column property="num" type="index" label="序号" width="80"></el-table-column>
-              <el-table-column property="typeId" label="文件类型" width="100"></el-table-column>
-              <el-table-column property="fileName" label="文件名称"></el-table-column>
-              <el-table-column property="fileAuthor" label="作者" width="80"></el-table-column>
-              <el-table-column
-                property="updateTime"
-                label="最后更新时间"
-                width="160"
-                :formatter="dateFormat"
-              ></el-table-column>
-              <!-- <el-table-column property="updateTime" label="最后更新时间" width="160"></el-table-column> -->
-              <el-table-column property="userName" label="上传人姓名"></el-table-column>
-              <el-table-column property="opration" label="操作">
-                <template slot-scope="scope">
-                  <span @click="attributeHandle(scope.row)">
-                    <el-button type="text" size="small" @click="dialogAttributeVisible = true">属性</el-button>
-                  </span> |
-                  <span>
-                    <el-button type="text" size="small" @click="deleteAttribute(scope.row.id)">删除</el-button>
-                  </span> |
-                  <el-button type="text" size="small" @click="downloadAttribute(scope.row.id)">下载</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-            <div>
-              <span>资源类型：</span>
-              <el-radio-group v-model="typeId" v-for="(item,index) in resourceType" :key="index">
-                <el-radio :label="item.id">{{item.name}}</el-radio>
-              </el-radio-group>
-            </div>
-            <div>
-              <span>上传文件：</span>
-              <input type="file" @change="fileUpload($event)" />
-            </div>
-            <span slot="footer" class="dialog-footer">
-              <el-button @click="dialogTableVisible = false">取 消</el-button>
-              <el-button type="primary" @click="dialogTableVisible = false">
-                <span @click="resourceSubmit">确 定</span>
-              </el-button>
-            </span>
-          </el-dialog>
-          <!-- 上传资源中的每条属性dialog -->
-          <el-dialog title="编辑属性" :visible.sync="dialogAttributeVisible" width="30%">
-            <div>
-              作者：
-              <input
-                type="text"
-                style="width:100%"
-                :placeholder="attributeObj.fileAuthor"
-                v-model="fileAuthor"
-              />
-            </div>
-            <div style="margin-top:20px">
-              描述：
-              <textarea
-                name
-                id
-                cols="55"
-                rows="8"
-                :placeholder="attributeObj.shortDescribe"
-                v-model="shortDescVal"
-              ></textarea>
-            </div>
-            <div style="margin-top:20px">
-              内容：
-              <textarea
-                name
-                id
-                cols="55"
-                rows="8"
-                :placeholder="attributeObj.content"
-                v-model="content"
-              ></textarea>
-            </div>
-            <div style="margin-top:20px">
-              上传图片：
-              <input type="file" @change="fileImgUpload($event)" />
-            </div>
-            <span slot="footer" class="dialog-footer">
-              <el-button @click="dialogAttributeVisible = false">取 消</el-button>
-              <el-button type="primary" @click="dialogAttributeVisible = false">
-                <span @click="attributeUpdate">更 新</span>
-              </el-button>
-            </span>
-          </el-dialog>
+      <el-col :span="10" :offset="3">
+        <div style="margin-top:30px">
+          <div style="font-size:25px;color:#fff">welcome，MasterSetting内容维护界面</div>
+          <div style="font-size:14px;color:#fff;padding-top:15px">贴合知识点 课程执行力 课程核心和主要内容</div>
         </div>
       </el-col>
+      <el-col :span="4" :offset="4">
+        <img src="../../images/back03.png" alt />
+      </el-col>
     </el-row>
+    <!-- -------------------------------- -->
+
     <!-- -------------------------------- -->
     <el-divider></el-divider>
     <el-row>
@@ -380,7 +209,7 @@ export default {
           updateTime: ""
         }
       ],
-      itemId: 1, //存储左侧课程点击时传递来的id
+      itemId: 248, //存储左侧课程点击时传递来的id
       //编辑框
       showEdit: [], //展示显示name的
       row: "",
@@ -410,10 +239,25 @@ export default {
       attributeObj: {}, //每一行属性对象
       fileAuthor: "", //属性的作者
       shortDescVal: "", //属性的描述
-      content: "" //属性的内容
+      content: "", //属性的内容
     };
   },
   methods: {
+    //获取左侧全部数据
+    getAllList() {
+      var app = this;
+      // console.log(this.$route);
+      var customId = this.$route.query.customId;
+      this.$http
+        .get(`/product/majorCustomItem/listByCustomIdForAble/${customId}`)
+        .then(function(res) {
+          // console.log(res.data);
+          app.leftTerm = res.data;
+          // console.log(app.leftTerm[0].childList[0].id);
+          app.itemId = app.leftTerm[0].childList[0].id;
+          console.log(app.itemId);//248 课程01的id
+        });
+    },
     //时间格式处理
     dateFormat: function(row, column) {
       // console.log(row);
@@ -428,18 +272,19 @@ export default {
     //点击每一个课程显示右边具体内容
     CourseDetails(itemIdChild) {
       // console.log(itemIdChild);
-      this.itemId = itemIdChild;
-      this.tableDetails(itemIdChild);
+      this.itemId = itemIdChild;//将当前的id赋值给itemId
+      this.tableDetails();
     },
     //获取左边栏的全部信息
-    tableDetails(itemId) {
-      // console.log(itemId);
+    tableDetails() {
+      // console.log(this.itemId);
       var app = this;
       this.$http
-        .get(`/product/majorCustomCourse/getListByItemId/${itemId}`)
+        .get(`/product/majorCustomCourse/getListByItemId/${this.itemId}`)
         .then(function(res) {
           // console.log(res.data);
           app.tableData = res.data;
+          // console.log(app.tableData);
         });
     },
     //右侧table表格在切换每一行时会传入val值
@@ -612,9 +457,9 @@ export default {
           // console.log(res.data);
           if (res.data == "") {
             app.$message.success("更新成功！");
-            app.fileAuthor = '';
-            app.shortDescVal = '';
-            app.content = '';
+            app.fileAuthor = "";
+            app.shortDescVal = "";
+            app.content = "";
             //再次调用获取接口函数，重新刷新列表
             var customCourseId = app.customCourseId;
             app.resourceList(customCourseId);
@@ -659,31 +504,21 @@ export default {
         });
     }
   },
+
   created() {
-    // console.log(this);
-    var app = this;
-    // console.log(this.$route);
-    var customId = this.$route.query.customId;
-    this.$http
-      .get(`/product/majorCustomItem/listByCustomIdForAble/${customId}`)
-      .then(function(res) {
-        // console.log(res.data);
-        app.leftTerm = res.data;
-      });
+    this.getAllList();//获取左侧全部的数据
+
+    this.tableDetails();//页面加载就显示第一学期下课程01内容
+
   }
 };
 </script>
 <style>
-*{
+* {
   margin: 0;
   padding: 0;
 }
 .top {
-  height: 100px;
-  background: #ff0;
+  background:linear-gradient(60deg, #36f3a4, #066b24);
 }
-/* .el-menu-vertical-demo:not(.el-menu--collapse) {
-  width: 200px;
-  min-height: 400px;
-} */
 </style>

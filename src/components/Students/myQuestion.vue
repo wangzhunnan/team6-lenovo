@@ -1,6 +1,5 @@
 <template>
   <div class="content">
-
     <div class="search_bg">
       <div class="search">
         <el-input v-model="input" placeholder="Java 最核心的基础是什么" style="width: 450px;"></el-input>
@@ -30,117 +29,124 @@
   </div>
 </template>
 <script>
-    export default {
-        name: "myAnswer",
-        data: function() {
-            return {
-                input: "",
-                typeName: "",
-                subject: "",
-                question: ""
-            };
-        },
-        methods: {
-            //当前组件用到的函数
-            ask: function() {
-                // console.log(this.question);
-                this.$http
-                    .post("/business/studentQuestion/submitQuestion", {
-                        typeName: this.typeName,
-                        subject: this.subject,
-                        question: this.question
-                    })
-                    .then(function(res) {
-                        console.log(res);
-                    });
-            }
-        },
-        created() {
-            //组件加载完成后的生命回调
-        }
+export default {
+  name: "myAnswer",
+  data: function() {
+    return {
+      input: "",
+      typeName: "",
+      subject: "",
+      question: ""
     };
+  },
+  methods: {
+    //当前组件用到的函数
+    
+    ask: function() {
+      var app = this;
+      // console.log(this.question);
+      this.$http
+        .post("/business/studentQuestion/submitQuestion", {
+          typeName: this.typeName,
+          subject: this.subject,
+          question: this.question
+        })
+        .then(function(res) {
+          console.log(res);
+          app.$message.success("问题提交成功");
+          //清空输入框
+          app.typeName = "";
+          app.subject = "";
+          app.question = "";
+        });
+    }
+  },
+  created() {
+    //组件加载完成后的生命回调
+  }
+};
 </script>
 
 <style scoped>
-  /* 主体部分content */
-  /* .content{
+/* 主体部分content */
+/* .content{
       width: 100%;
       height: 800px;
   } */
-  .content .search_bg {
-    /* width: 100%; */
-    height: 80px;
-    background: #62a1f4;
-    border: 1px solid #62a1f4;
-  }
-  .search {
-    margin-top: 20px;
-    margin-left: 440px;
-  }
-  .search button {
-    width: 120px;
-    height: 40px;
-    color: #fff;
-    border: none;
-  }
-  .search .sousuo {
-    margin-left: -5px;
-    height: 40px;
-    width: 120px;
-  }
-  .search button {
-    background: rgba(255, 255, 255, 0.26);
-    color: #fff;
-    border-color: rgba(255, 255, 255, 0.6);
-  }
-  .content .ask_bg {
-    width: 55%;
-    height: 558px;
-    margin-left: 400px;
-    /* background: #ccc; */
-    /* border: 1px solid #000; */
-  }
-  .content .ask_bg .my_ask {
-    width: 80px;
-    height: 25px;
-    /* background: #f00; */
-    line-height: 25px;
-    text-align: center;
-    border-left: 3px solid #62a1f4;
-    margin: 20px 0;
-  }
-  .content .ask_bg .my_problem {
-    /* width: 780px; */
-    /* background: #0f0; */
-    margin-left: 10px;
-    font-size: 13px;
-    color: #999;
-  }
-  .content .ask_bg .my_problem p {
-    margin: 10px 0;
-    font-size: 14px;
-    color: #606060;
-  }
-  .content .ask_bg .my_problem input {
-    width: 750px;
-    height: 30px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-  }
-  .content .ask_bg .my_problem .tag {
-    width: 400px;
-  }
-  .content .ask_bg .my_problem span {
-    color: #ff6a01;
-    font-size: 12px;
-    padding-left: 10px;
-    width: 160px;
-  }
-  .content .ask_bg .my_problem button {
-    width: 105px;
-    height: 35px;
-    background: #4abfe0;
-    color: #fff;
-    border: none;
-  }
+.content .search_bg {
+  /* width: 100%; */
+  height: 80px;
+  background: #62a1f4;
+  border: 1px solid #62a1f4;
+}
+.search {
+  margin-top: 20px;
+  margin-left: 300px;
+}
+.search button {
+  width: 120px;
+  height: 40px;
+  color: #fff;
+  border: none;
+}
+.search .sousuo {
+  margin-left: -5px;
+  height: 40px;
+  width: 120px;
+}
+.search button {
+  background: rgba(255, 255, 255, 0.26);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+.content .ask_bg {
+  width: 55%;
+  height: 558px;
+  margin-left: 300px;
+  /* background: #ccc; */
+  /* border: 1px solid #000; */
+}
+.content .ask_bg .my_ask {
+  width: 80px;
+  height: 25px;
+  /* background: #f00; */
+  line-height: 25px;
+  text-align: center;
+  border-left: 3px solid #62a1f4;
+  margin: 20px 0;
+}
+.content .ask_bg .my_problem {
+  /* width: 780px; */
+  /* background: #0f0; */
+  margin-left: 10px;
+  font-size: 13px;
+  color: #999;
+}
+.content .ask_bg .my_problem p {
+  margin: 10px 0;
+  font-size: 14px;
+  color: #606060;
+}
+.content .ask_bg .my_problem input {
+  width: 750px;
+  height: 30px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+.content .ask_bg .my_problem .tag {
+  width: 400px;
+}
+.content .ask_bg .my_problem span {
+  color: #ff6a01;
+  font-size: 12px;
+  padding-left: 10px;
+  width: 160px;
+}
+.content .ask_bg .my_problem button {
+  width: 105px;
+  height: 35px;
+  background: #4abfe0;
+  color: #fff;
+  border: none;
+}
 </style>

@@ -13,7 +13,7 @@
         </el-col>
       </el-row>
     </div>
-    <div class="content">
+    <div class="content1">
       <el-row :gutter="10" style="margin-top: 25px;">
         <el-col :span="12">
           <el-row style="border: 1px solid #ccc;border-radius:5px">
@@ -179,7 +179,7 @@ export default {
 .header {
   background: #808000;
 }
-.content {
+.content1 {
   width: 80%;
   margin-left: 10%;
 }

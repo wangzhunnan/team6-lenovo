@@ -19,7 +19,7 @@
             <div v-if="item.id == '3'">
               <div v-for="(item,index) in item.majorCustomItemTreeAdapterList" :key="index">
                 <div
-                  style="width: 200px; text-align: center; height: 460px; line-height: 50px; float: left;"
+                  style="width: 200px; text-align: center; height: 460px; line-height: 50px; float: left;background:#FAFAFA;margin-left:10px;"
                 >
                   <!-- 学期 -->
                   <el-tag closable @close="clickClose(item.id)">{{ item.name }}</el-tag>
@@ -51,10 +51,10 @@
             </div>
           </div>
           <div
-            style="background-color: #3ff; width: 300px; height: 400px; float: right; margin-right: 40px;"
+            style="background-color: #3ff; width: 300px; height: 400px; float: right; margin-right: -10px;"
           >
             <div
-              style="width: 300px; height: 150px; background: linear-gradient(60deg, #36f3a4, #066b24);"
+              style="width: 300px; height: 150px; background: linear-gradient(60deg, #36f3a4, #409EFF);"
             >
               <i class="el-icon-edit" style="color: #fff; font-size: 25px; padding: 15px;"></i>
               <i
@@ -159,7 +159,7 @@ export default {
 <style scoped>
 /* 标题部分 */
 .header {
-  background: linear-gradient(60deg, #36f3a4, #066b24);
+  background: linear-gradient(60deg, #36f3a4, #409EFF);
 }
 .clearfix:before,
 .clearfix:after {

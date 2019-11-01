@@ -12,43 +12,33 @@
       </el-col>
     </el-row>
     <!-- -------------------------------- -->
-
-    <!-- -------------------------------- -->
     <el-divider></el-divider>
-    <el-row>
-      <!-- 左侧 -->
-      <el-col :span="5" :offset="1">
-        <el-menu
-          default-active="2"
-          class="el-menu-vertical-demo"
-          v-for="(item,index) in leftTerm"
-          :key="index"
-          :title="item.name"
-        >
-          <!-- 学期 -->
-          <el-submenu index="1">
-            <template slot="title">
-              <i class="el-icon-menu" style="color:#49c0e0"></i>
-              <span>{{item.name}}</span>
-            </template>
-            <!-- 课程 -->
-            <el-menu-item-group>
-              <el-menu-item
-                index="'1-'+index"
-                v-for="(item,index) in item.childList"
-                :key="index"
-                :title="item.name"
-                @click="CourseDetails(item.id)"
-              >{{item.name}}</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-        </el-menu>
-      </el-col>
-      <!-- 右侧 -->
-      <el-col :span="16" :offset="1">
+    <!-- 学期部分 -->
+    <div style="background:#fff">
+      <el-row>
+        <el-tabs type="border-card">
+          <el-tab-pane v-for="(item,index) in leftTerm" :key="index" :title="item.name">
+            <span slot="label">
+              <i class="el-icon-menu"></i>
+              {{item.name}}
+            </span>
+            <div
+              v-for="(item,index) in item.childList"
+              :key="index"
+              :title="item.name"
+              @click="CourseDetails(item.id)"
+              class="SemesterCourse"
+            >
+              <span>&nbsp;&nbsp;&nbsp;{{item.name}}</span>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </el-row>
+      <!-- 课程部分 -->
+      <el-row>
         <div>
-          <div>
-            <el-button @click="addCourse()">添加课程</el-button>
+          <div style="margin-top:12px">
+            <el-button @click="addCourse()" class="addcourse">添加课程</el-button>
             <el-button @click="deleteCourse()">删除课程</el-button>
           </div>
           <el-table
@@ -58,9 +48,9 @@
             style="width: 100%"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="序号" width="120" type="index"></el-table-column>
-            <el-table-column prop="name" label="课程名称" width="200">
+            <el-table-column type="selection" width="100"></el-table-column>
+            <el-table-column prop="id" label="序号" width="200" type="index"></el-table-column>
+            <el-table-column prop="name" label="课程名称" width="300">
               <template slot-scope="{$index,row}">
                 <div style="display:inline-block;width:90%">
                   <span v-if="showEdit[$index]">
@@ -89,8 +79,8 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="140" :formatter="dateFormat"></el-table-column>
-            <el-table-column prop="updateTime" label="最后更新时间" width="140" :formatter="dateFormat"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" width="300" :formatter="dateFormat"></el-table-column>
+            <el-table-column prop="updateTime" label="最后更新时间" width="300" :formatter="dateFormat"></el-table-column>
             <el-table-column prop="sc" label show-overflow-tooltip>
               <template slot-scope="scope">
                 <el-button @click="dialogTableVisible = true">
@@ -102,7 +92,7 @@
           <!-- 上传资源dialog -->
           <el-dialog title="新增课程资源" :visible.sync="dialogTableVisible" width="70%">
             <el-table :data="gridData">
-              <el-table-column property="num" type="index" label="序号" width="80"></el-table-column>
+              <el-table-column property="num" type="index" label="序号" width="100"></el-table-column>
               <el-table-column property="typeId" label="文件类型" width="100"></el-table-column>
               <el-table-column property="fileName" label="文件名称"></el-table-column>
               <el-table-column property="fileAuthor" label="作者" width="80"></el-table-column>
@@ -188,8 +178,8 @@
             </span>
           </el-dialog>
         </div>
-      </el-col>
-    </el-row>
+      </el-row>
+    </div>
     <div style="height: 300px"></div>
   </div>
 </template>
@@ -239,7 +229,7 @@ export default {
       attributeObj: {}, //每一行属性对象
       fileAuthor: "", //属性的作者
       shortDescVal: "", //属性的描述
-      content: "", //属性的内容
+      content: "" //属性的内容
     };
   },
   methods: {
@@ -255,7 +245,7 @@ export default {
           app.leftTerm = res.data;
           // console.log(app.leftTerm[0].childList[0].id);
           app.itemId = app.leftTerm[0].childList[0].id;
-          console.log(app.itemId);//248 课程01的id
+          console.log(app.itemId); //248 课程01的id
         });
     },
     //时间格式处理
@@ -272,7 +262,7 @@ export default {
     //点击每一个课程显示右边具体内容
     CourseDetails(itemIdChild) {
       // console.log(itemIdChild);
-      this.itemId = itemIdChild;//将当前的id赋值给itemId
+      this.itemId = itemIdChild; //将当前的id赋值给itemId
       this.tableDetails();
     },
     //获取左边栏的全部信息
@@ -506,10 +496,9 @@ export default {
   },
 
   created() {
-    this.getAllList();//获取左侧全部的数据
+    this.getAllList(); //获取左侧全部的数据
 
-    this.tableDetails();//页面加载就显示第一学期下课程01内容
-
+    this.tableDetails(); //页面加载就显示第一学期下课程01内容
   }
 };
 </script>
@@ -519,6 +508,27 @@ export default {
   padding: 0;
 }
 .top {
-  background:linear-gradient(60deg, #36f3a4, #066b24);
+  background: linear-gradient(60deg, #36f3a4, #409EFF);
+}
+.SemesterCourse span{
+  display: block;
+  margin-top: 2px;
+  width: 1360px;
+  height: 30px;
+  line-height: 30px;
+  font-size: 14px;
+  background: #FAFAFA;
+  border-radius: 5px;
+}
+.SemesterCourse span:hover {
+  cursor: pointer;
+  background: #409EFF;
+  color:#fff;
+}
+.SemesterCourse span:active{
+  color: #000;
+}
+.addcourse{
+  margin-left: 15px;
 }
 </style>

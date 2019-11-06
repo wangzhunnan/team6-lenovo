@@ -34,7 +34,6 @@ export default {
   background: url(../../images/ditu.jpg) no-repeat;
   background-size: 100%;
   padding-top: 30px;
-  /* margin-top: 30px; */
   bottom: 0;
   height: 94px;
 }
@@ -72,8 +71,6 @@ export default {
 .z-footer2 span a:hover{
     color: #fff;
 }
-
-
 .z-jp {
   height: 30px;
   line-height: 30px;

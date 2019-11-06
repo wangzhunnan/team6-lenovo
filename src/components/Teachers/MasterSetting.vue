@@ -60,6 +60,7 @@
                       placeholder="输入课程名称"
                       @keyup.enter.native="saveCustomCourse(row.name,row.id)"
                     ></el-input>
+                    <!-- vue 监听键盘回车事件 @keyup.enter || @keyup.enter.native(使用组件时添加native) -->
                   </span>
                   <span v-if="!showEdit[$index]">{{row.name}}</span>
                 </div>
@@ -199,7 +200,7 @@ export default {
           updateTime: ""
         }
       ],
-      itemId: 248, //存储左侧课程点击时传递来的id
+      itemId: 357, //存储左侧课程点击时传递来的id
       //编辑框
       showEdit: [], //展示显示name的
       row: "",
@@ -244,8 +245,8 @@ export default {
           // console.log(res.data);
           app.leftTerm = res.data;
           // console.log(app.leftTerm[0].childList[0].id);
-          app.itemId = app.leftTerm[0].childList[0].id;
-          console.log(app.itemId); //248 课程01的id
+          // app.itemId = app.leftTerm[0].childList[0].id;
+          // console.log(app.itemId); //248 课程01的id
         });
     },
     //时间格式处理
@@ -277,14 +278,6 @@ export default {
           // console.log(app.tableData);
         });
     },
-    //右侧table表格在切换每一行时会传入val值
-    handleSelectionChange(val) {
-      // console.log(val);
-      //map函数是进行筛选每一行的id,并将获取到的id放入delCurrent数组中
-      app.multipleSelection = val.map(item => {
-        this.delCurrent.push(item.id);
-      });
-    },
     //添加空的一行课程
     addCourse() {
       var list = {
@@ -305,7 +298,7 @@ export default {
       this.showBtn[row.id] = true;
       this.$set(this.showBtn, row.id, true);
     },
-    //当取消选框的时候,就是保存数据的时候
+    //当点击对号按钮时,就是保存数据的时候
     handelCancel(index, row) {
       // console.log(index);//5
       // console.log(row);
@@ -340,6 +333,14 @@ export default {
           }
         });
     },
+    //右侧table表格在切换每一行时会传入val值
+    handleSelectionChange(val) {
+      // console.log(val);
+      //map函数是进行筛选每一行的id,并将获取到的id放入delCurrent数组中
+      app.multipleSelection = val.map(item => {
+        this.delCurrent.push(item.id);
+      });
+    },
     //删除课程
     deleteCourse() {
       // console.log(this.delCurrent);//这里删除的是每一条数据的id所组成的数组
@@ -353,6 +354,8 @@ export default {
               app.$message.success("课程删除成功！");
               //再次获取table列表，实现更新
               app.tableDetails(app.itemId);
+            }else{
+              app.$message.error("删除失败！");
             }
           });
       }
@@ -494,10 +497,8 @@ export default {
         });
     }
   },
-
   created() {
     this.getAllList(); //获取左侧全部的数据
-
     this.tableDetails(); //页面加载就显示第一学期下课程01内容
   }
 };

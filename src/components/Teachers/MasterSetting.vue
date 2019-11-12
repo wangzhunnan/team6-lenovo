@@ -60,7 +60,7 @@
                       placeholder="输入课程名称"
                       @keyup.enter.native="saveCustomCourse(row.name,row.id)"
                     ></el-input>
-                    <!-- vue 监听键盘回车事件 @keyup.enter || @keyup.enter.native(使用组件时添加native) -->
+                    <!-- vue 监听键盘回车事件 @keyup.enter || @keyup.enter.native(使用组件时监听根元素的原生事件添加native) -->
                   </span>
                   <span v-if="!showEdit[$index]">{{row.name}}</span>
                 </div>
@@ -84,8 +84,8 @@
             <el-table-column prop="updateTime" label="最后更新时间" width="300" :formatter="dateFormat"></el-table-column>
             <el-table-column prop="sc" label show-overflow-tooltip>
               <template slot-scope="scope">
-                <el-button @click="dialogTableVisible = true">
-                  <span @click="uploadResources(scope.row.id)">上传资源</span>
+                <el-button @click="uploadResources(scope.row.id)">
+                  <span @click="dialogTableVisible = true">上传资源</span>
                 </el-button>
               </template>
             </el-table-column>
@@ -225,7 +225,7 @@ export default {
       resourceType: [], //资源类型
       typeId: "", //显示资源类型
       customCourseId: "", //保存customCourseId：右边table当前行的id
-      file: "", //存放上传视频的路径url
+      file: "", //存放上传视频的相关数据
       fileImg: "", //存放上传图片的路径url
       attributeObj: {}, //每一行属性对象
       fileAuthor: "", //属性的作者

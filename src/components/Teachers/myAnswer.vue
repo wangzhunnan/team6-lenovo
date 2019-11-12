@@ -13,7 +13,7 @@
     </el-row>
     <el-row>
       <div class="mbox">
-        <p>问题库</p>
+        <h4>问题库</h4>
         <el-tabs type="border-card">
           <!-- 已回复部分 -->
           <el-tab-pane label="已回复提问">
@@ -22,14 +22,14 @@
               style="width: 100%"
             >
               <!--slice(a,b):从下标a开始，到下标b结束，含头不含尾。
-              第一页：(0,6)；第二页：(6,12)计算：当前页-1乘每页显示数，当前页乘每页显示数-->
-              <el-table-column prop="subject" label="问题" width="180"></el-table-column>
-              <el-table-column prop="proposeTime" label="发起时间" width="180"></el-table-column>
-              <el-table-column prop="isSolution" label="状态">已解答</el-table-column>
+              第一页：(0,5)；第二页：(5,10)计算：当前页-1乘每页显示数，当前页乘每页显示数-->
+              <el-table-column prop="subject" label="问题" width="380"></el-table-column>
+              <el-table-column prop="proposeTime" label="发起时间" width="300"></el-table-column>
+              <el-table-column prop="isSolution" label="状态" width="220">已解答</el-table-column>
               <el-table-column prop="opration" label="操作">
                 <template slot-scope="scope">
-                  <div @click="dialogNewsY = true" class="answers">
-                    <span @click="answerClick(scope.row.id)">详情</span>
+                  <div @click="answerClick(scope.row.id)">
+                    <el-button  size="small" type="text" @click="dialogNewsY = true" class="answers">详情</el-button >
                   </div>
                 </template>
               </el-table-column>
@@ -54,13 +54,13 @@
             >
               <!--slice(a,b):从下标a开始，到下标b结束，含头不含尾。
               第一页：(0,6)；第二页：(6,12)计算：当前页-1乘每页显示数，当前页乘每页显示数-->
-              <el-table-column prop="subject" label="问题" width="180"></el-table-column>
-              <el-table-column prop="proposeTime" label="发起时间" width="180"></el-table-column>
-              <el-table-column prop="isSolution" label="状态">未解答</el-table-column>
+              <el-table-column prop="subject" label="问题" width="380"></el-table-column>
+              <el-table-column prop="proposeTime" label="发起时间" width="300"></el-table-column>
+              <el-table-column prop="isSolution" label="状态" width="220">未解答</el-table-column>
               <el-table-column prop="opration" label="操作">
                 <template slot-scope="{$index,row}">
-                  <div @click="dialogNewsN = true" class="answers">
-                    <span @click="answerClick(row.id,$index)">回复</span>
+                  <div @click="answerClick(row.id,$index)">
+                    <el-button  size="small" type="text" @click="dialogNewsN = true" class="answers">回复</el-button >
                   </div>
                 </template>
               </el-table-column>
@@ -129,14 +129,14 @@
         </el-dialog>
       </div>
       <div class="mbox">
-        <p>意见反馈</p>
+        <h4>意见反馈</h4>
         <el-table
           :data="tableDataOpinion.slice((opinionCurrentPage-1)*opinionPageSize,opinionCurrentPage*opinionPageSize)"
           style="width: 100%"
         >
-          <el-table-column prop="subject" label="意见" width="180"></el-table-column>
+          <el-table-column prop="subject" label="意见" width="280"></el-table-column>
           <el-table-column prop="typeName" label="意见类型" width="180"></el-table-column>
-          <el-table-column prop="commitTime" label="发起时间"></el-table-column>
+          <el-table-column prop="commitTime" label="发起时间" width="280"></el-table-column>
           <el-table-column prop="status" label="状态">
             <template slot-scope="scope">
               <span v-if="scope.row.isHandle == 'Y'">已处理</span>
@@ -145,11 +145,11 @@
           </el-table-column>
           <el-table-column prop="opration" label="操作">
             <template slot-scope="scope">
-              <div v-if="scope.row.isHandle == 'Y'" @click="dialogVisible02 = true" class="answers">
-                <span @click="opinionSee(scope.row.id)">查看</span>
+              <div v-if="scope.row.isHandle == 'Y'" @click="opinionSee(scope.row.id)" class="answers">
+                <el-button size="small" type="text" @click="dialogVisible02 = true">查看</el-button>
               </div>
-              <div v-if="scope.row.isHandle == 'N'" @click="dialogVisible03 = true" class="answers">
-                <span style="color:#f00" @click="opinionSee(scope.row.id)">处理</span>
+              <div v-if="scope.row.isHandle == 'N'" @click="opinionSee(scope.row.id)" class="answers">
+                <el-button style="color:#f00" @click="dialogVisible03 = true" size="small" type="text">处理</el-button>
               </div>
             </template>
           </el-table-column>
@@ -247,7 +247,7 @@ export default {
   data: function() {
     return {
       page: 1, //请求页数
-      pageSize: 100, //请求总条数（最大化去请求，把全部都请求到）
+      pageSize: 2147483647, //请求总条数（最大化‘21亿多’去请求，把全部都请求到）
       dataNewsY: [], //已回复
       currentPageNewsY: 1, //当前页
       pageSizeNewsY: 5, //每页显示数
@@ -280,26 +280,26 @@ export default {
     },
     //获取问题库消息列表
     getNewList() {
-      this.tableDataNews = [];
-      this.dataNewsY = [];
-      this.dataNewsN=[];
+      this.tableDataNews = [];//清空数组，防止再次push导致总数增倍
+      this.dataNewsY = [];//清空数组，防止再次push导致总数增倍
+      this.dataNewsN=[];//清空数组，防止再次push导致总数增倍
       var app = this;
       this.$http
         .post("/business/studentQuestion/page", {
-          page: this.page,
-          pageSize: this.pageSize
+          page: this.page,//请求页数
+          pageSize: this.pageSize//请求总页数
         })
         .then(function(res) {
           // console.log(res.data);
-          app.tableDataNews = res.data.data;
-          for (var i = 0; i < app.tableDataNews.length; i++) {
+          app.tableDataNews = res.data.data;//新数组存储所有数据
+          for (var i = 0; i < app.tableDataNews.length; i++) {//判断每一条数据
             if (app.tableDataNews[i].explanation == null) {
               //未回复
-              app.dataNewsN.push(app.tableDataNews[i]);
+              app.dataNewsN.push(app.tableDataNews[i]);//满足将第i条放入dataNewsN数组中
             } else {
               //已回复
               app.tableDataNews[i].isSolution == "Y";
-              app.dataNewsY.push(app.tableDataNews[i]);
+              app.dataNewsY.push(app.tableDataNews[i]);//满足将第i条放入dataNewsY数组中
             }
           }
           // console.log(app.dataNewsY); //已回复

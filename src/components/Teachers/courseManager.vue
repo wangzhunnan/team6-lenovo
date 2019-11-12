@@ -45,7 +45,7 @@
                 <!-- 添加学期按钮框 -->
                 <div style="float: left;" v-if="isShow">
                   <el-input class="input-new-tag" v-model="name"></el-input>
-                  <el-button type="primary" plain @click="clickAdd(item.id,0,name)">添加</el-button>
+                  <el-button type="primary" plain @click="clickAdd(item.id,0)">添加</el-button>
                 </div>
               </template>
             </div>
@@ -79,14 +79,14 @@ export default {
   name: "CourseManagement",
   data: function() {
     return {
-      tableData: [],
-      activeName: 0,
-      dynamicTags: [],
-      name: "",
-      customId: "",
-      id: "",
-      arr: [],
-      isShow: false,
+      // tableData: [],//没用
+      activeName: 0,//tab默认显示第一个“大前端”
+      // dynamicTags: [],//没用
+      name: "",//存储输入的课程名称/学期名称
+      // customId: "",//没用
+      // id: "",没用
+      arr: [],//存储页面的全部数据
+      isShow: false,//
       btnText: "课程定制"
     };
   },
@@ -99,6 +99,7 @@ export default {
         .then(function(res) {
           // console.log(res.data);
           app.arr = res.data;
+          console.log(app.arr);
         });
     },
     hideOrShow() {
@@ -128,7 +129,7 @@ export default {
           name: this.name
         })
         .then(function(res) {
-          // console.log(res);
+          console.log(res);
           app.$message.success("添加成功!");
           app.name = ""; //清空输入框
           app.getAllList(); //重新调用获取全部数据函数
